@@ -49,4 +49,19 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/config.js"></script><script src="assets/app.js"></script>
+    <!-- 1. Chargement de la bibliothèque Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- 2. Initialisation du client Supabase -->
+  <script>
+    const SUPABASE_URL = 'https://iahzasnluqapwppclfmn.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_TIb7eyfTYz5x-DhexGOWDw_VkPja_E-'; // Remplace par ta clé sb_publishable_...
+
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  </script>
+
+  <!-- Ton fichier script principal (si tu en as un) -->
+  <script src="app.js"></script>
+</body>
+</html>
 </body></html>
