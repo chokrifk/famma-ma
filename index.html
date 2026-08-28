@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#087f60"><title>Famma-Me — Powered by Choko</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header>
+  <div class="brand"><b>F</b><span><strong>famma-me</strong><small>Powered by Choko</small></span></div>
+  <nav><button id="lang">العربية</button><button id="authBtn">👤 Connexion</button><button id="locBtn" class="green">📍 Me localiser</button></nav>
+</header>
+<section class="hero">
+ <div><span class="eyebrow">🇹🇳 Communauté tunisienne</span><h1 id="h1">Famma ? On le trouve.</h1><p id="sub">Trouve un commerce, de l'eau ou une ressource près de toi — et aide les autres à la trouver.</p></div>
+ <button id="addBtn" class="cta">＋ Signaler un lieu</button>
+</section>
+<section class="stats"><div><b id="count">0</b><span>lieux</span></div><div><b id="waterCount">0</b><span>points d'eau</span></div><div><b id="govCount">24</b><span>gouvernorats</span></div><div><b>🇹🇳</b><span>Tunisie</span></div></section>
+<section class="toolbar">
+ <input id="search" placeholder="🔎 Rechercher un commerce, une ville…">
+ <select id="gov"><option value="">Tous les gouvernorats</option></select>
+ <select id="cat"><option value="">Toutes les catégories</option><option value="shop">🛒 Épicerie / commerce</option><option value="market">🛍️ Supermarché</option><option value="bakery">🥖 Boulangerie</option><option value="pharmacy">💊 Pharmacie</option><option value="fuel">⛽ Station-service</option><option value="water">💧 Eau</option><option value="other">📍 Autre</option></select>
+ <button id="waterFilter">💧 Eau disponible</button>
+</section>
+<main><aside id="list"></aside><div id="map"></div></main>
+
+<div id="placeModal" class="overlay hidden"><div class="modal"><button class="x" data-close>×</button><h2>Signaler un lieu</h2><p>Place le marqueur sur la carte ou utilise ta position.</p>
+<form id="placeForm">
+<label>Nom<input id="name" required maxlength="100" placeholder="Ex. Épicerie El Amal"></label>
+<label>Catégorie<select id="formCat" required><option value="shop">🛒 Épicerie / commerce</option><option value="market">🛍️ Supermarché</option><option value="bakery">🥖 Boulangerie</option><option value="pharmacy">💊 Pharmacie</option><option value="fuel">⛽ Station-service</option><option value="water">💧 Eau</option><option value="other">📍 Autre</option></select></label>
+<label>Gouvernorat<select id="formGov" required></select></label>
+<label>Adresse<input id="address" maxlength="160" placeholder="Rue / quartier"></label>
+<label class="check"><input id="hasWater" type="checkbox"> 💧 Eau disponible maintenant</label>
+<div class="grid2"><label>Latitude<input id="lat" type="number" step="any" required></label><label>Longitude<input id="lng" type="number" step="any" required></label></div>
+<button class="green wide">Publier le signalement</button>
+</form></div></div>
+
+<div id="authModal" class="overlay hidden"><div class="modal"><button class="x" data-close>×</button><h2>Connexion</h2><p>La connexion sera activée avec Supabase dans la configuration V2.</p><form id="authForm"><label>Email<input id="email" type="email" required placeholder="vous@email.com"></label><button class="green wide">Recevoir le lien de connexion</button></form><small>Mode démo : aucun mot de passe n'est demandé.</small></div></div>
+<footer>© 2026 Famma-Me · Powered by Choko · Données communautaires</footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/config.js"></script><script src="assets/app.js"></script>
+</body></html>
