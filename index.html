@@ -6,7 +6,16 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="assets/style.css">
 </head>
-<body>
+<!-- Client Supabase JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const SUPABASE_URL = 'https://iahzasnluqapwppclfmn.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_TIb7eyfTYz5x-DhexGOWDw_VkPja_E-'; // Remplace par ta clé sb_publishable_...
+
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
+  <body>
 <header>
   <div class="brand"><b>F</b><span><strong>famma-me</strong><small>Powered by Choko</small></span></div>
   <nav><button id="lang">العربية</button><button id="authBtn">👤 Connexion</button><button id="locBtn" class="green">📍 Me localiser</button></nav>
