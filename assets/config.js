@@ -1,10 +1,4 @@
-// Famma-Me V2 — Supabase configuration
-// 1. Create a Supabase project.
-// 2. Put your Project URL and Publishable key below.
-// 3. Run supabase/schema.sql in the Supabase SQL Editor.
-//
-// NEVER put a Supabase service_role/secret key in this file.
-window.FAMMA_CONFIG={
-  supabaseUrl:"",
-  supabaseKey:""
-};
+const SUPABASE_URL = 'https://iahzasnluqapwppclfmn.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_TIb7eyfTYz5x-DhexGOWDw_VkPja_E-'; // Ta clé sb_publishable_...
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
