@@ -1,4 +1,33 @@
 const supabase = window.clientSupabase;
+const placeForm = document.getElementById('placeForm');
+
+if (placeForm) {
+  placeForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const newPlace = {
+      name: document.getElementById('name').value,
+      category: document.getElementById('formCat').value,
+      governorate: document.getElementById('formGov').value,
+      address: document.getElementById('address').value,
+      latitude: parseFloat(document.getElementById('lat').value),
+      longitude: parseFloat(document.getElementById('lng').value)
+    };
+
+    const { data, error } = await clientSupabase
+      .from('places')
+      .insert([newPlace]);
+
+    if (error) {
+      alert("Erreur lors de l'enregistrement : " + error.message);
+    } else {
+      alert("Lieu ajouté avec succès !");
+      document.getElementById('placeModal').classList.add('hidden');
+      placeForm.reset();
+      loadPlacesFromSupabase(); // Rafraîchit la carte et les compteurs
+    }
+  });
+}
 async function loadPlacesFromSupabase() {
   const { data: places, error } = await clientSupabase
     .from('places')
