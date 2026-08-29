@@ -1,4 +1,35 @@
 const supabase = window.clientSupabase;
+async function loadPlacesFromSupabase() {
+  const { data: places, error } = await clientSupabase
+    .from('places')
+    .select('*');
+
+  if (error) {
+    console.error('Erreur chargement Supabase :', error.message);
+    return;
+  }
+
+  // 1. Mise à jour des chiffres du dashboard
+  if (document.getElementById('count')) {
+    document.getElementById('count').textContent = places.length;
+  }
+  if (document.getElementById('waterCount')) {
+    const waterPlaces = places.filter(p => p.category === 'water').length;
+    document.getElementById('waterCount').textContent = waterPlaces;
+  }
+
+  // 2. Ajout des marqueurs sur la carte Leaflet (si 'map' est initialisée)
+  if (typeof map !== 'undefined' && places) {
+    places.forEach(place => {
+      L.marker([place.latitude, place.longitude])
+        .addTo(map)
+        .bindPopup(`<b>${place.name}</b><br>${place.address || ''}`);
+    });
+  }
+}
+
+// Appeler la fonction dès le chargement
+document.addEventListener('DOMContentLoaded', loadPlacesFromSupabase);
 const GOVS=["Ariana","Béja","Ben Arous","Bizerte","Gabès","Gafsa","Jendouba","Kairouan","Kasserine","Kébili","Le Kef","Mahdia","Manouba","Médenine","Monastir","Nabeul","Sfax","Sidi Bouzid","Siliana","Sousse","Tataouine","Tozeur","Tunis","Zaghouan"];
 const demo=[
 {id:"d1",name:"Épicerie El Amal",category:"shop",gov:"Tunis",address:"Centre-ville",water:true,lat:36.8065,lng:10.1815,verified:true},
