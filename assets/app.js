@@ -1,3 +1,4 @@
+const supabase = window.clientSupabase;
 const GOVS=["Ariana","Béja","Ben Arous","Bizerte","Gabès","Gafsa","Jendouba","Kairouan","Kasserine","Kébili","Le Kef","Mahdia","Manouba","Médenine","Monastir","Nabeul","Sfax","Sidi Bouzid","Siliana","Sousse","Tataouine","Tozeur","Tunis","Zaghouan"];
 const demo=[
 {id:"d1",name:"Épicerie El Amal",category:"shop",gov:"Tunis",address:"Centre-ville",water:true,lat:36.8065,lng:10.1815,verified:true},
