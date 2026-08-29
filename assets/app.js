@@ -1,6 +1,5 @@
 // --- 1. INITIALISATION DU CLIENT SUPABASE ---
-const supabase = window.clientSupabase;
-
+var supabase = window.clientSupabase || window.supabase;
 // --- 2. FONCTION : CHARGER ET AFFICHER LES LIEUX ---
 async function loadPlacesFromSupabase() {
   if (!supabase) {
