@@ -1,20 +1,38 @@
 // --- 1. INITIALISATION DU CLIENT SUPABASE ---
-var supabase = window.clientSupabase || window.supabase;
+const db = window.dbClient;
 // --- 2. FONCTION : CHARGER ET AFFICHER LES LIEUX ---
 async function loadPlacesFromSupabase() {
-  if (!supabase) {
-    console.error("Le client Supabase n'est pas initialisé.");
-    return;
-  }
+  if (!db) return;
 
-  const { data: places, error } = await supabase
+  const { data: places, error } = await db
     .from('places')
     .select('*')
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Erreur lors de la récupération des lieux :', error.message);
+    console.error('Erreur :', error.message);
     return;
+  }
+
+  const countElem = document.getElementById('count');
+  const waterElem = document.getElementById('waterCount');
+
+  if (countElem) countElem.textContent = places.length;
+  if (waterElem) {
+    const totalWater = places.filter(p => p.category === 'water').length;
+    waterElem.textContent = totalWater;
+  }
+
+  if (typeof map !== 'undefined' && places) {
+    places.forEach(place => {
+      if (place.latitude && place.longitude) {
+        L.marker([place.latitude, place.longitude])
+          .addTo(map)
+          .bindPopup(`<b>${place.name}</b><br>${place.address || ''}`);
+      }
+    });
+  }
+}
   }
 
   console.log('Lieux chargés :', places);
