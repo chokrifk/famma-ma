@@ -1,9 +1,17 @@
 // --- INITIALISATION SUPABASE ---
 const db = window.db;
 
-// --- GESTION DES MODALES ET BOUTONS ---
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Bouton "+ Signaler un lieu"
+  // 1. Géolocalisation automatique au chargement
+  getUserLocation();
+
+  // 2. Bouton "Me localiser" dans l'en-tête
+  const locateBtn = document.getElementById('locateBtn');
+  if (locateBtn) {
+    locateBtn.addEventListener('click', getUserLocation);
+  }
+
+  // 3. Gestion de la modale "+ Signaler un lieu"
   const addBtn = document.getElementById('addBtn');
   const placeModal = document.getElementById('placeModal');
   
@@ -13,37 +21,57 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 2. Bouton "Connexion"
-  const authBtn = document.querySelector('header button:last-child');
-  const authModal = document.getElementById('authModal');
-  
-  if (authBtn && authModal) {
-    authBtn.addEventListener('click', () => {
-      authModal.classList.remove('hidden');
-    });
-  }
-
-  // 3. Boutons de fermeture (Croix 'x')
+  // Fermeture de la modale
   const closeButtons = document.querySelectorAll('[data-close]');
   closeButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       if (placeModal) placeModal.classList.add('hidden');
-      if (authModal) authModal.classList.add('hidden');
     });
   });
 
-  // 4. Fermer la modale en cliquant à l'extérieur
   window.addEventListener('click', (e) => {
     if (e.target === placeModal) placeModal.classList.add('hidden');
-    if (e.target === authModal) authModal.classList.add('hidden');
   });
 
-  // Charger les données de Supabase
+  // Charger les données de la base
   loadPlacesFromSupabase();
-  initForms();
+  initPlaceForm();
 });
 
-// --- CHARGER ET AFFICHER LES LIEUX ---
+// --- GEOLOCALISATION AUTOMATIQUE ---
+function getUserLocation() {
+  if ('geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        // Centrer la carte sur la position de l'utilisateur
+        if (typeof map !== 'undefined') {
+          map.setView([lat, lng], 13);
+          
+          // Ajouter un marqueur de position actuelle
+          L.circleMarker([lat, lng], {
+            color: '#10b981',
+            radius: 8,
+            fillOpacity: 0.8
+          }).addTo(map).bindPopup("<b>Vous êtes ici</b>").openPopup();
+        }
+
+        // Remplir automatiquement la latitude/longitude dans le formulaire si vide
+        const latInput = document.getElementById('lat');
+        const lngInput = document.getElementById('lng');
+        if (latInput && !latInput.value) latInput.value = lat;
+        if (lngInput && !lngInput.value) lngInput.value = lng;
+      },
+      (error) => {
+        console.warn('Géolocalisation refusée ou non disponible :', error.message);
+      }
+    );
+  }
+}
+
+// --- CHARGER LES LIEUX DEPUIS SUPABASE ---
 async function loadPlacesFromSupabase() {
   if (!db) return;
 
@@ -57,7 +85,6 @@ async function loadPlacesFromSupabase() {
     return;
   }
 
-  // Mise à jour des compteurs du dashboard
   const countElem = document.getElementById('count');
   const waterElem = document.getElementById('waterCount');
 
@@ -67,7 +94,6 @@ async function loadPlacesFromSupabase() {
     waterElem.textContent = totalWater;
   }
 
-  // Marqueurs sur la carte Leaflet
   if (typeof map !== 'undefined' && places) {
     places.forEach(place => {
       if (place.latitude && place.longitude) {
@@ -79,54 +105,32 @@ async function loadPlacesFromSupabase() {
   }
 }
 
-// --- SOUMISSION DES FORMULAIRES ---
-function initForms() {
-  // Formulaire d'ajout de lieu
+// --- FORMULAIRE D'AJOUT DE LIEU ---
+function initPlaceForm() {
   const placeForm = document.getElementById('placeForm');
-  if (placeForm) {
-    placeForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const newPlace = {
-        name: document.getElementById('name').value,
-        category: document.getElementById('formCat').value,
-        governorate: document.getElementById('formGov').value,
-        address: document.getElementById('address').value,
-        latitude: parseFloat(document.getElementById('lat').value),
-        longitude: parseFloat(document.getElementById('lng').value)
-      };
+  if (!placeForm) return;
 
-      const { error } = await db.from('places').insert([newPlace]);
+  placeForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const newPlace = {
+      name: document.getElementById('name').value,
+      category: document.getElementById('formCat').value,
+      governorate: document.getElementById('formGov').value,
+      address: document.getElementById('address').value,
+      latitude: parseFloat(document.getElementById('lat').value),
+      longitude: parseFloat(document.getElementById('lng').value)
+    };
 
-      if (error) {
-        alert("Erreur lors de l'ajout : " + error.message);
-      } else {
-        alert("Lieu ajouté avec succès !");
-        document.getElementById('placeModal').classList.add('hidden');
-        placeForm.reset();
-        loadPlacesFromSupabase();
-      }
-    });
-  }
+    const { error } = await db.from('places').insert([newPlace]);
 
-  // Formulaire de connexion Magic Link
-  const authForm = document.querySelector('#authModal form');
-  if (authForm) {
-    authForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = authForm.querySelector('input[type="email"]').value;
-
-      const { error } = await db.auth.signInWithOtp({
-        email: email,
-        options: { emailRedirectTo: window.location.href }
-      });
-
-      if (error) {
-        alert("Erreur : " + error.message);
-      } else {
-        alert("Lien de connexion envoyé ! Vérifiez votre boîte mail.");
-        document.getElementById('authModal').classList.add('hidden');
-      }
-    });
-  }
+    if (error) {
+      alert("Erreur lors de l'ajout : " + error.message);
+    } else {
+      alert("Lieu ajouté avec succès !");
+      document.getElementById('placeModal').classList.add('hidden');
+      placeForm.reset();
+      loadPlacesFromSupabase();
+    }
+  });
 }
